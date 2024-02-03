@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/wallpaper_description"
+    android:label="Floating Circles"
+    android:settingsActivity="com.mkproductions.floatincircles"
+    android:thumbnail='@mipmap/ic_launcher_round' />

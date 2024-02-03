@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Floating Circles</string>
+    <string name="wallpaper_description">FloatingCircles</string>
+    <string name="number_of_balls">Number of balls 1 – 500</string>
+    <string name="main_activity_resource">Apply circles wallpaper</string>
+    <string name="ball_count">ball_count</string>
+    <string name="ball_alpha">ball_alpha</string>
+    <string name="ball_color">ball_color</string>
+    <string name="is_randomized">is_randomized</string>
+</resources>
