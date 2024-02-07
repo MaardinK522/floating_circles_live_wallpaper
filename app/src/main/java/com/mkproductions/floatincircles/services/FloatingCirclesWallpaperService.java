@@ -22,21 +22,18 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
     public static int HEIGHT;
     public static int bobSize = 50;
     private int frameCount = 0;
-    private final int bobCount;
-    private final float ballAlpha;
-    private final int ballColor;
-    private final boolean isRandomized;
-
-
-    public FloatingCirclesWallpaperService(int ballCount, int ballAlpha, boolean isRandomized, int ballColor) {
-        this.bobCount = ballCount;
-        this.ballAlpha = ballAlpha;
-        this.isRandomized = isRandomized;
-        this.ballColor = ballColor;
-    }
+    private int bobCount;
+    private float bobAlpha = 1;
+    private int bobColor;
+    private boolean isRandomized;
 
     @Override
     public WallpaperService.Engine onCreateEngine() {
+        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        bobCount = sharedPreferences.getInt(getString(R.string.bob_count), 0);
+        bobAlpha = sharedPreferences.getInt(getString(R.string.bob_alpha), 100);
+        bobColor = sharedPreferences.getInt(getString(R.string.bob_color), Color.WHITE);
+        isRandomized = sharedPreferences.getBoolean(getString(R.string.is_randomized), false);
         return new FloatingCirclesEngine();
     }
 
@@ -68,12 +65,14 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
             super.onCreate(surfaceHolder);
             this.holder = surfaceHolder;
             for (int a = 0; a < bobCount; a++)
-                bobs[a] = new Bob(isRandomized ? getRandomColor() : ballColor, WIDTH, HEIGHT);
+                bobs[a] = new Bob(isRandomized ? getRandomColor() : bobColor, WIDTH, HEIGHT);
         }
 
         private int getRandomColor() {
             Random random = new Random();
-            return Color.argb(ballAlpha * 255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+            float alpha = bobAlpha / 100;
+            Log.d("Floating Circles", "Ball Alpha " + alpha);
+            return Color.argb(alpha, random.nextFloat(), random.nextFloat(), random.nextFloat());
         }
 
         private final Runnable drawFloatingCircles = this::draw;

@@ -3,7 +3,6 @@ package com.mkproductions.floatincircles.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
-import androidx.viewbinding.ViewBinding;
 
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
@@ -15,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar mBrightnessSeekBar;
     private CardView mColorPicker;
     private CheckBox mRandomColorCheckBox;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor prefEditor;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -46,12 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViews();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        prefEditor = sharedPreferences.edit();
 
-        AtomicInteger ballCount = new AtomicInteger(sharedPreferences.getInt("ball_count", 0));
-        AtomicInteger ballAlpha = new AtomicInteger(sharedPreferences.getInt(getString(R.string.ball_alpha), 0));
-        AtomicInteger ballColor = new AtomicInteger(sharedPreferences.getInt("ball_color", 0));
+        AtomicInteger ballCount = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_count), 0));
+        AtomicInteger ballAlpha = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_alpha), 0));
+        AtomicInteger ballColor = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_color), 0));
         AtomicBoolean areBallsRandomized = new AtomicBoolean(sharedPreferences.getBoolean(getString(R.string.is_randomized), false));
 
         mColorPicker.setCardBackgroundColor(Color.WHITE);
@@ -61,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
         mBallCountTextInputEditText.setText(" " + ballCount.get());
 
         mBrightnessSeekBar.setProgress(ballAlpha.get());
+
         mBrightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 ballAlpha.set(progress);
-                prefEditor.putInt(getString(R.string.ball_alpha), ballAlpha.get()).apply();
+                prefEditor.putInt(getString(R.string.bob_alpha), ballAlpha.get()).apply();
                 mBrightnessTextView.setText("Brightness: " + progress);
             }
 
@@ -78,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        mRandomColorCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mColorPicker.setActivated(!isChecked);
+            if (isChecked) {
+                mColorPicker.setOnClickListener(v -> Toast.makeText(MainActivity.this, "Please, uncheck the random colors.", Toast.LENGTH_SHORT).show());
+            } else {
+                mColorPicker.setOnClickListener(mColorPickerClickListener);
             }
         });
 
@@ -93,35 +103,18 @@ public class MainActivity extends AppCompatActivity {
 
                 if (mRandomColorCheckBox.isChecked()) {
                     ballColor.set(mColorPicker.getSolidColor());
-                    prefEditor.putInt(getString(R.string.ball_color), mColorPicker.getSolidColor()).apply();
+                    prefEditor.putInt(getString(R.string.bob_color), mColorPicker.getSolidColor()).apply();
                 }
-                prefEditor.putInt(getString(R.string.ball_count), ballCount.get()).apply();
+                prefEditor.putInt(getString(R.string.bob_count), ballCount.get()).apply();
                 prefEditor.putBoolean(getString(R.string.is_randomized), mRandomColorCheckBox.isChecked()).apply();
 
-                Log.d("Ball count", String.valueOf(sharedPreferences.getInt(getString(R.string.ball_count), 10)));
-
-                FloatingCirclesWallpaperService floatingCirclesWallpaperService = new FloatingCirclesWallpaperService(ballCount.get(), ballAlpha.get(), areBallsRandomized.get(), ballColor.get());
+                Log.d("Ball count", String.valueOf(sharedPreferences.getInt(getString(R.string.bob_count), 10)));
                 Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                intent.putExtra(
-                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        new ComponentName(
-                                this,
-                                floatingCirclesWallpaperService.getClass()
-                        )
-                );
+                intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(this, FloatingCirclesWallpaperService.class));
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Rendering too much on screen may drain more battery. Please keep it under 150.", Toast.LENGTH_SHORT).show();
                 mBallCountTextInputEditText.setText("150");
-            }
-        });
-
-        mRandomColorCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mColorPicker.setActivated(!isChecked);
-            if (isChecked) {
-                mColorPicker.setOnClickListener(v -> Toast.makeText(MainActivity.this, "Please, uncheck the random colors.", Toast.LENGTH_SHORT).show());
-            } else {
-                mColorPicker.setOnClickListener(mColorPickerClickListener);
             }
         });
     }
@@ -138,7 +131,10 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener mColorPickerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new ColorPickerDialog.Builder(MainActivity.this).setTitle("Select color").setPositiveButton("SELECT", (ColorEnvelopeListener) (envelope, fromUser) -> mColorPicker.setCardBackgroundColor(envelope.getColor())).setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).setBottomSpace(10).show();
+            new ColorPickerDialog.Builder(MainActivity.this).setTitle("Select color").setPositiveButton("SELECT", (ColorEnvelopeListener) (envelope, fromUser) -> {
+                prefEditor.putInt(getString(R.string.bob_color), envelope.getColor());
+                mColorPicker.setCardBackgroundColor(envelope.getColor());
+            }).setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss()).setBottomSpace(10).setOnDismissListener(null).show();
         }
     };
 }
