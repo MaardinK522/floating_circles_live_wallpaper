@@ -20,18 +20,21 @@ import java.util.Random;
 public class FloatingCirclesWallpaperService extends WallpaperService {
     public static int WIDTH;
     public static int HEIGHT;
-    public static int bobSize = 50;
+    public static int bobFactor = 50;
     private int frameCount = 0;
     private int bobCount;
-    private float bobAlpha = 1;
+    private float bobAlpha;
     private int bobColor;
     private boolean isRandomized;
+    private int bobSpeed;
 
     @Override
     public WallpaperService.Engine onCreateEngine() {
         SharedPreferences sharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
         bobCount = sharedPreferences.getInt(getString(R.string.bob_count), 0);
         bobAlpha = sharedPreferences.getInt(getString(R.string.bob_alpha), 100);
+        bobSpeed = sharedPreferences.getInt(getString(R.string.bob_speed), 1);
+        bobFactor = sharedPreferences.getInt(getString(R.string.bob_factor), 1);
         bobColor = sharedPreferences.getInt(getString(R.string.bob_color), Color.WHITE);
         isRandomized = sharedPreferences.getBoolean(getString(R.string.is_randomized), false);
         return new FloatingCirclesEngine();
@@ -43,7 +46,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
 
     public static PointF getRandomPoint(int width, int height) {
         Random random = new Random();
-        return new PointF(random.nextFloat() * (width - bobSize) + bobSize, random.nextFloat() * (height - bobSize) + bobSize);
+        return new PointF(random.nextFloat() * (width - bobFactor) + bobFactor, random.nextFloat() * (height - bobFactor) + bobFactor);
     }
 
     private class FloatingCirclesEngine extends WallpaperService.Engine {
@@ -65,7 +68,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
             super.onCreate(surfaceHolder);
             this.holder = surfaceHolder;
             for (int a = 0; a < bobCount; a++)
-                bobs[a] = new Bob(isRandomized ? getRandomColor() : bobColor, WIDTH, HEIGHT);
+                bobs[a] = new Bob(isRandomized ? getRandomColor() : bobColor, bobSpeed, WIDTH, HEIGHT);
         }
 
         private int getRandomColor() {
@@ -83,7 +86,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
                 paint.setColor(Color.argb(255, 0, 0, 0));
                 canvas.drawRect(0, 0, WIDTH, HEIGHT, paint);
                 for (Bob bob : bobs) {
-                    bob.show(canvas, paint);
+                    bob.show(canvas, paint, bobFactor);
                     bob.update(frameCount, WIDTH, HEIGHT);
                 }
                 canvas.save();

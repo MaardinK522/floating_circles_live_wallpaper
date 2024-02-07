@@ -7,4 +7,6 @@
     <string name="bob_alpha">ball_alpha</string>
     <string name="bob_color">ball_color</string>
     <string name="is_randomized">is_randomized</string>
+    <string name="bob_speed">ball_speed</string>
+    <string name="bob_factor">bob_factor</string>
 </resources>

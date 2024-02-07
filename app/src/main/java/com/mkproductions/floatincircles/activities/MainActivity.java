@@ -33,7 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton mApplyButton;
     private TextInputEditText mBallCountTextInputEditText;
     private TextView mBrightnessTextView;
+    private TextView mSpeedTextView;
+    private TextView mSizeTextView;
+    private SeekBar mSpeedSeekBar;
     private SeekBar mBrightnessSeekBar;
+    private SeekBar mSizeSeekBar;
     private CardView mColorPicker;
     private CheckBox mRandomColorCheckBox;
     private SharedPreferences sharedPreferences;
@@ -51,13 +55,16 @@ public class MainActivity extends AppCompatActivity {
 
         AtomicInteger ballCount = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_count), 0));
         AtomicInteger ballAlpha = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_alpha), 0));
+        AtomicInteger ballSpeed = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_speed), 0));
+        AtomicInteger ballSizeFactor = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_factor), 0));
         AtomicInteger ballColor = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_color), 0));
+
         AtomicBoolean areBallsRandomized = new AtomicBoolean(sharedPreferences.getBoolean(getString(R.string.is_randomized), false));
 
         mColorPicker.setCardBackgroundColor(Color.WHITE);
         mColorPicker.setOnClickListener(mColorPickerClickListener);
 
-        mBrightnessTextView.setText("Brightness: " + ballAlpha);
+        mBrightnessTextView.setText("Brightness: " + ballAlpha + "%");
         mBallCountTextInputEditText.setText(" " + ballCount.get());
 
         mBrightnessSeekBar.setProgress(ballAlpha.get());
@@ -69,6 +76,43 @@ public class MainActivity extends AppCompatActivity {
                 ballAlpha.set(progress);
                 prefEditor.putInt(getString(R.string.bob_alpha), ballAlpha.get()).apply();
                 mBrightnessTextView.setText("Brightness: " + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mSpeedSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                ballSpeed.set(progress);
+                prefEditor.putInt(getString(R.string.bob_speed), ballSpeed.get()).apply();
+                mSpeedTextView.setText("Speed: " + progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        mSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                ballSizeFactor.set(progress);
+                prefEditor.putInt(getString(R.string.bob_factor), ballSizeFactor.get()).apply();
+                mSizeTextView.setText("Size: " + progress + "%");
             }
 
             @Override
@@ -120,10 +164,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void findViews() {
-        mBrightnessSeekBar = findViewById(R.id.main_activity_seekbar);
         mColorPicker = findViewById(R.id.main_activity_color_picker_button);
         mApplyButton = findViewById(R.id.main_activity_apply_wallpaper_button);
         mBrightnessTextView = findViewById(R.id.main_activity_brightness_textview);
+        mSpeedTextView = findViewById(R.id.main_activity_speed_textview);
+        mSizeTextView = findViewById(R.id.main_activity_size_textview);
+
+        mBrightnessSeekBar = findViewById(R.id.main_activity_brightness_seekbar);
+        mSpeedSeekBar = findViewById(R.id.main_activity_speed_seekbar);
+        mSizeSeekBar = findViewById(R.id.main_activity_size_seekbar);
         mRandomColorCheckBox = findViewById(R.id.main_activity_random_colo_checkbox);
         mBallCountTextInputEditText = findViewById(R.id.main_activity_ball_count_textinputedittext);
     }

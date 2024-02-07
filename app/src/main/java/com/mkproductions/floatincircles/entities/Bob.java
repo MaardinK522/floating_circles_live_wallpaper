@@ -1,7 +1,6 @@
 package com.mkproductions.floatincircles.entities;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
@@ -13,21 +12,25 @@ public class Bob {
     PointF pos;
     PointF target;
     int bobColor;
+    int speed;
 
-    public Bob(int bobColor, int width, int height) {
+    public Bob(int bobColor, int speed, int width, int height) {
         this.bobColor = bobColor;
+        this.speed = speed;
         this.pos = FloatingCirclesWallpaperService.getRandomPoint(width, height);
         this.target = FloatingCirclesWallpaperService.getRandomPoint(width, height);
     }
 
-    public void show(Canvas canvas, Paint paint) {
+    public void show(Canvas canvas, Paint paint, int sizeFactor) {
         paint.setColor(this.bobColor);
-        canvas.drawCircle(this.pos.x, this.pos.y, FloatingCirclesWallpaperService.bobSize, paint);
+        canvas.drawCircle(this.pos.x, this.pos.y, FloatingCirclesWallpaperService.bobFactor * ((float) sizeFactor / 100), paint);
     }
 
     public void update(int frameCount, int width, int height) {
         int lowerBound = 40;
         int upperBound = 60;
+        lowerBound += lowerBound * (speed / 100);
+        upperBound += upperBound * (speed / 100);
         this.pos.x = FloatingCirclesWallpaperService.lerp(this.pos.x, this.target.x, 0.05f);
         this.pos.y = FloatingCirclesWallpaperService.lerp(this.pos.y, this.target.y, 0.05f);
         if (frameCount % (new Random().nextInt(upperBound - lowerBound) + lowerBound) == 0)
