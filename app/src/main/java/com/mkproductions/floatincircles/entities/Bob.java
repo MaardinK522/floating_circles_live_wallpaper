@@ -27,10 +27,10 @@ public class Bob {
     }
 
     public void update(int frameCount, int width, int height) {
-        int lowerBound = 40;
+        int lowerBound = 50;
         int upperBound = 60;
-        lowerBound += lowerBound * (speed / 100);
-        upperBound += upperBound * (speed / 100);
+        lowerBound += lowerBound * ((float) (speed / 100));
+        upperBound += upperBound * ((float) (speed / 100));
         this.pos.x = FloatingCirclesWallpaperService.lerp(this.pos.x, this.target.x, 0.05f);
         this.pos.y = FloatingCirclesWallpaperService.lerp(this.pos.y, this.target.y, 0.05f);
         if (frameCount % (new Random().nextInt(upperBound - lowerBound) + lowerBound) == 0)
