@@ -21,10 +21,25 @@ public class Bob {
         this.target = FloatingCirclesWallpaperService.getRandomPoint(width, height);
     }
 
-    public void show(Canvas canvas, Paint paint, int sizeFactor) {
+    public void renderCircle(Canvas canvas, Paint paint, int sizeFactor) {
         paint.setColor(this.bobColor);
         canvas.drawCircle(this.pos.x, this.pos.y, FloatingCirclesWallpaperService.bobFactor * ((float) sizeFactor / 100), paint);
     }
+
+    public void renderRect(Canvas canvas, Paint paint, int sizeFactor) {
+        float size = FloatingCirclesWallpaperService.bobFactor * ((float) sizeFactor / 100);
+        size *= 2;
+        paint.setColor(this.bobColor);
+        canvas.drawRect(this.pos.x - (size / 2), this.pos.y - (size / 2), this.pos.x + size, this.pos.y + size, paint);
+    }
+
+    public void renderRoundedRect(Canvas canvas, Paint paint, int sizeFactor) {
+        float size = FloatingCirclesWallpaperService.bobFactor * ((float) sizeFactor / 100);
+        size *= 2;
+        paint.setColor(this.bobColor);
+        canvas.drawRoundRect(this.pos.x / 2, this.pos.y / 2, this.pos.x + size, this.pos.y + size, size * 0.25f, size * 0.25f, paint);
+    }
+
 
     public void update(int frameCount, int width, int height) {
         int lowerBound = 50;

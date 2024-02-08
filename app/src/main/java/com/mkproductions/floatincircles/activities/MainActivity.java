@@ -9,11 +9,11 @@ import android.app.WallpaperManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox mRandomColorCheckBox;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor prefEditor;
+    private RadioGroup mShapesRadioGroup;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -58,16 +59,22 @@ public class MainActivity extends AppCompatActivity {
         AtomicInteger ballSpeed = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_speed), 0));
         AtomicInteger ballSizeFactor = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_factor), 0));
         AtomicInteger ballColor = new AtomicInteger(sharedPreferences.getInt(getString(R.string.bob_color), 0));
-
         AtomicBoolean areBallsRandomized = new AtomicBoolean(sharedPreferences.getBoolean(getString(R.string.is_randomized), false));
+        AtomicInteger renderingShape = new AtomicInteger(sharedPreferences.getInt(getString(R.string.rendering_shape), R.id.main_activity_circle_shapes_radio_button));
 
-        mColorPicker.setCardBackgroundColor(Color.WHITE);
+        mColorPicker.setCardBackgroundColor(ballColor.get());
         mColorPicker.setOnClickListener(mColorPickerClickListener);
 
-        mBrightnessTextView.setText("Brightness: " + ballAlpha + "%");
         mBallCountTextInputEditText.setText(" " + ballCount.get());
 
+        mBrightnessTextView.setText("Brightness: " + ballAlpha + "%");
         mBrightnessSeekBar.setProgress(ballAlpha.get());
+
+        mSpeedTextView.setText("Speed: " + ballSpeed + "%");
+        mSpeedSeekBar.setProgress(ballSpeed.get());
+
+        mSizeTextView.setText("Size: " + ballSizeFactor + "%");
+        mSizeSeekBar.setProgress(ballSizeFactor.get());
 
         mBrightnessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
@@ -128,11 +135,15 @@ public class MainActivity extends AppCompatActivity {
 
         mRandomColorCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             mColorPicker.setActivated(!isChecked);
-            if (isChecked) {
-                mColorPicker.setOnClickListener(v -> Toast.makeText(MainActivity.this, "Please, uncheck the random colors.", Toast.LENGTH_SHORT).show());
-            } else {
-                mColorPicker.setOnClickListener(mColorPickerClickListener);
-            }
+            if (isChecked) mColorPicker.setOnClickListener(v -> Toast.makeText(MainActivity.this, "Please, uncheck the random colors.", Toast.LENGTH_SHORT).show());
+            else mColorPicker.setOnClickListener(mColorPickerClickListener);
+        });
+
+        mShapesRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            renderingShape.set(checkedId);
+            prefEditor.putInt(getString(R.string.rendering_shape), renderingShape.get()).apply();
+            Log.d("MainActivity", "Shape: " + (renderingShape.get() == R.id.main_activity_circle_shapes_radio_button ? "Circle" : "Rectangle"));
+            Log.d("MainActivity", "Id: " + (renderingShape.get() == R.id.main_activity_circle_shapes_radio_button ? R.id.main_activity_circle_shapes_radio_button : R.id.main_activity_rect_shapes_radio_button));
         });
 
         mBallCountTextInputEditText.setText(String.valueOf(ballCount.get()));
@@ -174,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
         mSpeedSeekBar = findViewById(R.id.main_activity_speed_seekbar);
         mSizeSeekBar = findViewById(R.id.main_activity_size_seekbar);
         mRandomColorCheckBox = findViewById(R.id.main_activity_random_colo_checkbox);
+
+        mShapesRadioGroup = findViewById(R.id.main_activity_shapes_radio_group);
+
         mBallCountTextInputEditText = findViewById(R.id.main_activity_ball_count_textinputedittext);
     }
 

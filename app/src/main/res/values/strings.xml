@@ -9,4 +9,5 @@
     <string name="is_randomized">is_randomized</string>
     <string name="bob_speed">ball_speed</string>
     <string name="bob_factor">bob_factor</string>
+    <string name="rendering_shape">rendering_shape</string>
 </resources>

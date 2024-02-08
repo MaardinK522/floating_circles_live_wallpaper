@@ -27,6 +27,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
     private int bobColor;
     private boolean isRandomized;
     private int bobSpeed;
+    private int shape;
 
     @Override
     public WallpaperService.Engine onCreateEngine() {
@@ -37,6 +38,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
         bobFactor = sharedPreferences.getInt(getString(R.string.bob_factor), 1);
         bobColor = sharedPreferences.getInt(getString(R.string.bob_color), Color.WHITE);
         isRandomized = sharedPreferences.getBoolean(getString(R.string.is_randomized), false);
+        shape = sharedPreferences.getInt(getString(R.string.rendering_shape), R.id.main_activity_circle_shapes_radio_button);
         return new FloatingCirclesEngine();
     }
 
@@ -60,6 +62,7 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
             handler = new Handler();
             paint = new Paint();
             paint.setAntiAlias(true);
+            paint.setStyle(Paint.Style.FILL);
             bobs = new Bob[bobCount];
         }
 
@@ -86,7 +89,9 @@ public class FloatingCirclesWallpaperService extends WallpaperService {
                 paint.setColor(Color.argb(255, 0, 0, 0));
                 canvas.drawRect(0, 0, WIDTH, HEIGHT, paint);
                 for (Bob bob : bobs) {
-                    bob.show(canvas, paint, bobFactor);
+                    if (shape == R.id.main_activity_circle_shapes_radio_button) bob.renderCircle(canvas, paint, bobFactor);
+                    else if (shape == R.id.main_activity_round_rect_shapes_radio_button) bob.renderRoundedRect(canvas, paint, bobFactor);
+                    else bob.renderRect(canvas, paint, bobFactor);
                     bob.update(frameCount, WIDTH, HEIGHT);
                 }
                 canvas.save();

@@ -111,6 +111,42 @@
                 android:progressTint="?attr/colorPrimary"
                 android:thumbTint="?attr/colorTertiary" />
 
+            <RadioGroup
+                android:id="@+id/main_activity_shapes_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+
+                <RadioButton
+                    android:id="@+id/main_activity_circle_shapes_radio_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Circles"
+                    android:textAlignment="textEnd"
+                    tools:ignore="HardcodedText" />
+
+                <RadioButton
+                    android:id="@+id/main_activity_rect_shapes_radio_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rectangles"
+                    android:textAlignment="textEnd"
+                    tools:ignore="HardcodedText" />
+
+                <RadioButton
+                    android:id="@+id/main_activity_round_rect_shapes_radio_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rounded Rectangle"
+                    android:textAlignment="textEnd"
+                    tools:ignore="HardcodedText" />
+            </RadioGroup>
+
             <CheckBox
                 android:id="@+id/main_activity_random_colo_checkbox"
                 android:layout_width="match_parent"
