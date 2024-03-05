@@ -7,7 +7,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.mkproductions.floatingcircles"
+        applicationId "com.mkproductions.floatincircles"
         minSdk 26
         targetSdk 34
         versionCode 1

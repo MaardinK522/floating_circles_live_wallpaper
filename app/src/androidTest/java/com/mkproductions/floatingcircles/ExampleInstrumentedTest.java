@@ -28,6 +28,6 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
         // Context of the app under test.
-        assertEquals("com.mkproductions.floatingcircles", context.getPackageName());
+        assertEquals("com.mkproductions.floatincircles", context.getPackageName());
     }
 }
