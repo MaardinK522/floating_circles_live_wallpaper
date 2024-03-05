@@ -1,12 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.FloatinCircles" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.FloatingCircles" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="fontFamily">@font/begonia</item>
-    </style>
-
-    <style name="Theme.FloatingCircles" parent="Base.Theme.FloatinCircles">
         <item name="fontFamily">@font/begonia</item>
     </style>
 </resources>

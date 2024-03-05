@@ -2,5 +2,5 @@
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/wallpaper_description"
     android:label="Floating Circles"
-    android:settingsActivity="com.mkproductions.floatincircles"
+    android:settingsActivity="floatingcircles"
     android:thumbnail='@mipmap/ic_launcher_round' />
